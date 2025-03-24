@@ -16,6 +16,14 @@ Must have the following features:
 - delete functionality
 - update functionality
 
+## Screenshots
+
+<p>
+  <img src="https://github.com/kentlance/quick-notes/blob/master/Main.png" alt="Main Screenshot" width="20%">
+  <img src="https://github.com/kentlance/quick-notes/blob/master/Edit%20Screenshot.png" alt="Edit Screenshot" width="20%">
+</p>
+
+
 ## Made With:
 
 React, Expo, Nativewind, and ESLint & Prettier

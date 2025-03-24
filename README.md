@@ -8,7 +8,9 @@ Create an app or build on top of your previous activity using the following:
 - global state (context)
 - children prop
 - reusable components
-  Must have the following features:
+
+Must have the following features:
+
 - modal
 - add functionality
 - delete functionality

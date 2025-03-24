@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Keyboard,
+  Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState } from "react";
@@ -25,6 +26,7 @@ export default function HomeScreen({ label }: Props) {
     { _id: string; title: string; content: string }[]
   >([]);
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleAddNote = () => {
     Keyboard.dismiss();
@@ -40,9 +42,6 @@ export default function HomeScreen({ label }: Props) {
       });
 
       if (editingNoteId !== null) {
-        {
-          /* Edit existing note */
-        }
         const updatedNote = {
           _id: editingNoteId,
           title: formattedDate,
@@ -57,12 +56,7 @@ export default function HomeScreen({ label }: Props) {
         setNoteItems(updatedNoteItems);
         setEditingNoteId(null);
       } else {
-        {
-          /* Add new note */
-        }
-
         const newNote = {
-          // uuid generates a unique ID for the note
           _id: uuid.v4(),
           title: formattedDate,
           content: note,
@@ -70,6 +64,7 @@ export default function HomeScreen({ label }: Props) {
         setNoteItems([...noteItems, newNote]);
       }
       setNote("");
+      setModalVisible(false);
     }
   };
 
@@ -78,6 +73,7 @@ export default function HomeScreen({ label }: Props) {
     if (noteToEdit) {
       setNote(noteToEdit.content);
       setEditingNoteId(noteId);
+      setModalVisible(true);
     }
   };
 
@@ -89,7 +85,6 @@ export default function HomeScreen({ label }: Props) {
     <SafeAreaView>
       <View style={styles.container}>
         <View style={styles.notesWrapper}>
-          {/* Notes page here */}
           <Text style={styles.homeTitle}>Quick Notes</Text>
           <ScrollView style={styles.items}>
             {noteItems.map((item, index) => {
@@ -109,24 +104,33 @@ export default function HomeScreen({ label }: Props) {
           </ScrollView>
         </View>
 
-        {/** Writing a note section */}
-
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={styles.writeNoteWrapper}
+        <Modal
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
         >
-          <TextInput
-            style={styles.input}
-            placeholder={"Write a note"}
-            value={note}
-            onChangeText={(text) => setNote(text)}
-          />
-          <Pressable onPress={() => handleAddNote()}>
-            <View style={styles.addWrapper}>
-              <Text style={styles.addText}>+</Text>
-            </View>
-          </Pressable>
-        </KeyboardAvoidingView>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={styles.modalContainer}
+          >
+            <TextInput
+              style={styles.input}
+              placeholder={"Write a note"}
+              value={note}
+              onChangeText={(text) => setNote(text)}
+            />
+            <Pressable onPress={() => handleAddNote()}>
+              <View style={styles.addWrapper}>
+                <Text style={styles.addText}>+</Text>
+              </View>
+            </Pressable>
+          </KeyboardAvoidingView>
+        </Modal>
+
+        <Pressable onPress={() => setModalVisible(true)}>
+          <View style={styles.addNoteButton}>
+            <Text style={styles.addNoteText}>Add Note</Text>
+          </View>
+        </Pressable>
       </View>
     </SafeAreaView>
   );
@@ -151,13 +155,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingBottom: 50,
   },
-  writeNoteWrapper: {
-    position: "absolute",
-    bottom: 60,
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-around",
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#fff",
+    padding: 20,
   },
   input: {
     paddingVertical: 15,
@@ -179,4 +182,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   addText: {},
+  addNoteButton: {
+    position: "absolute",
+    bottom: 60,
+    right: 20,
+    backgroundColor: "#fff",
+    padding: 10,
+    borderRadius: 10,
+    borderColor: "#43311D",
+    borderWidth: 1,
+  },
+  addNoteText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
 });
